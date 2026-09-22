@@ -1,0 +1,2341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KidStudio - Music Maker</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --bg: #10131b;
+    --panel: #181c27;
+    --panel2: #202532;
+    --border: #303747;
+    --text: #f4f7ff;
+    --muted: #8e98ad;
+    --purple: #8b5cf6;
+    --pink: #ec4899;
+    --blue: #38bdf8;
+    --green: #34d399;
+    --yellow: #facc15;
+    --orange: #fb923c;
+    --red: #fb7185;
+}
+
+body {
+    font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    background:
+        radial-gradient(circle at 20% 0%, #292044 0, transparent 35%),
+        radial-gradient(circle at 90% 20%, #12304b 0, transparent 30%),
+        var(--bg);
+
+    color: var(--text);
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* =========================
+   MAIN APP
+========================= */
+
+.app {
+    display: grid;
+    grid-template-rows: 68px 1fr 170px;
+    height: 100vh;
+}
+
+/* =========================
+   TOP BAR
+========================= */
+
+.topbar {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 10px 18px;
+
+    background: rgba(15, 18, 26, .94);
+    border-bottom: 1px solid var(--border);
+
+    backdrop-filter: blur(18px);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 180px;
+}
+
+.logo-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 13px;
+
+    display: grid;
+    place-items: center;
+
+    background:
+        linear-gradient(135deg,
+            var(--purple),
+            var(--pink));
+
+    font-size: 23px;
+    box-shadow: 0 8px 25px rgba(139, 92, 246, .35);
+}
+
+.logo-text {
+    font-weight: 900;
+    font-size: 19px;
+}
+
+.logo-sub {
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.transport {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+button {
+    border: 0;
+    color: white;
+    font: inherit;
+    cursor: pointer;
+}
+
+.transport button {
+    width: 40px;
+    height: 38px;
+    border-radius: 10px;
+
+    background: var(--panel2);
+    border: 1px solid var(--border);
+
+    transition: .15s;
+}
+
+.transport button:hover {
+    transform: translateY(-2px);
+    background: #2b3140;
+}
+
+.play {
+    background: var(--green) !important;
+    color: #07130f !important;
+    font-weight: 900;
+}
+
+.record {
+    color: var(--red);
+}
+
+.bpm {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 5px;
+}
+
+.bpm input {
+    width: 65px;
+}
+
+input[type="number"] {
+    background: #11151e;
+    border: 1px solid var(--border);
+    color: white;
+    border-radius: 8px;
+    padding: 7px;
+}
+
+.project-name {
+    flex: 1;
+    text-align: center;
+    font-weight: 800;
+    color: #dce3f4;
+}
+
+.top-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.action {
+    padding: 9px 13px;
+    border-radius: 9px;
+    background: var(--panel2);
+    border: 1px solid var(--border);
+    font-size: 13px;
+}
+
+.action:hover {
+    background: #2c3342;
+}
+
+/* =========================
+   WORKSPACE
+========================= */
+
+.workspace {
+    display: grid;
+    grid-template-columns: 230px 1fr;
+    min-height: 0;
+}
+
+/* =========================
+   LEFT PANEL
+========================= */
+
+.sidebar {
+    background: rgba(20, 23, 32, .94);
+    border-right: 1px solid var(--border);
+    padding: 16px;
+
+    overflow-y: auto;
+}
+
+.section-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+    color: var(--muted);
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.instrument {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 11px;
+    margin-bottom: 7px;
+
+    background: #1b202c;
+    border: 1px solid #2b3240;
+    border-radius: 11px;
+
+    cursor: pointer;
+    transition: .15s;
+}
+
+.instrument:hover {
+    transform: translateX(3px);
+    border-color: #59647a;
+}
+
+.instrument.active {
+    background: linear-gradient(
+        135deg,
+        rgba(139,92,246,.24),
+        rgba(236,72,153,.12)
+    );
+
+    border-color: var(--purple);
+}
+
+.instrument-icon {
+    width: 35px;
+    height: 35px;
+    display: grid;
+    place-items: center;
+
+    border-radius: 9px;
+    background: #282e3d;
+    font-size: 18px;
+}
+
+.instrument-info {
+    flex: 1;
+}
+
+.instrument-name {
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.instrument-desc {
+    font-size: 10px;
+    color: var(--muted);
+}
+
+.track-color {
+    width: 6px;
+    height: 30px;
+    border-radius: 10px;
+}
+
+.color-purple { background: var(--purple); }
+.color-blue { background: var(--blue); }
+.color-green { background: var(--green); }
+.color-orange { background: var(--orange); }
+.color-pink { background: var(--pink); }
+
+/* =========================
+   MAIN EDITOR
+========================= */
+
+.editor {
+    min-width: 0;
+    display: grid;
+    grid-template-rows: 48px 1fr;
+}
+
+.editor-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 7px 12px;
+
+    background: #171b25;
+    border-bottom: 1px solid var(--border);
+}
+
+.tool {
+    padding: 7px 11px;
+    border-radius: 8px;
+
+    background: #232937;
+    border: 1px solid #303747;
+
+    font-size: 12px;
+}
+
+.tool.active {
+    background: var(--purple);
+    border-color: var(--purple);
+}
+
+.spacer {
+    flex: 1;
+}
+
+.grid-info {
+    color: var(--muted);
+    font-size: 11px;
+}
+
+/* =========================
+   PIANO ROLL
+========================= */
+
+.piano-area {
+    display: grid;
+    grid-template-columns: 75px 1fr;
+
+    min-height: 0;
+    overflow: hidden;
+}
+
+.keys {
+    background: #11151e;
+    border-right: 1px solid var(--border);
+    overflow: hidden;
+}
+
+.key {
+    height: 28px;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    padding-right: 8px;
+
+    border-bottom: 1px solid #272d39;
+
+    color: #9ba5b9;
+    font-size: 10px;
+}
+
+.key.black {
+    background: #090b10;
+    color: #7e8798;
+}
+
+.roll-container {
+    position: relative;
+    overflow: auto;
+    background: #11151e;
+}
+
+.roll {
+    position: relative;
+
+    width: 1600px;
+    height: 896px;
+
+    background-image:
+        linear-gradient(
+            to right,
+            rgba(255,255,255,.075) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            to bottom,
+            rgba(255,255,255,.055) 1px,
+            transparent 1px
+        );
+
+    background-size:
+        50px 28px,
+        50px 28px;
+}
+
+/* Strong beat lines */
+
+.roll::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    background-image:
+        linear-gradient(
+            to right,
+            transparent 199px,
+            rgba(255,255,255,.11) 200px,
+            transparent 201px
+        );
+
+    background-size: 200px 100%;
+    pointer-events: none;
+}
+
+/* =========================
+   NOTES
+========================= */
+
+.note {
+    position: absolute;
+
+    height: 24px;
+
+    border-radius: 6px;
+
+    display: flex;
+    align-items: center;
+
+    padding-left: 8px;
+
+    font-size: 10px;
+    font-weight: 900;
+
+    color: white;
+
+    box-shadow:
+        inset 0 1px rgba(255,255,255,.25),
+        0 4px 10px rgba(0,0,0,.25);
+
+    cursor: grab;
+
+    animation: noteAppear .15s ease;
+}
+
+.note:hover {
+    filter: brightness(1.15);
+}
+
+@keyframes noteAppear {
+    from {
+        transform: scale(.7);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.note.piano {
+    background: linear-gradient(
+        135deg,
+        #8b5cf6,
+        #6d28d9
+    );
+}
+
+.note.bass {
+    background: linear-gradient(
+        135deg,
+        #38bdf8,
+        #0284c7
+    );
+}
+
+.note.melody {
+    background: linear-gradient(
+        135deg,
+        #ec4899,
+        #be185d
+    );
+}
+
+/* =========================
+   BOTTOM MIXER
+========================= */
+
+.mixer {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+
+    background: #151923;
+    border-top: 1px solid var(--border);
+
+    min-height: 0;
+}
+
+.channels {
+    display: flex;
+    overflow-x: auto;
+}
+
+.channel {
+    min-width: 150px;
+
+    padding: 12px;
+
+    border-right: 1px solid var(--border);
+}
+
+.channel-name {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.meter {
+    height: 7px;
+    background: #0c0f15;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.meter-fill {
+    width: 55%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        var(--green),
+        var(--yellow),
+        var(--red)
+    );
+}
+
+.volume {
+    margin-top: 10px;
+    width: 100%;
+}
+
+.master {
+    padding: 14px 18px;
+    border-left: 1px solid var(--border);
+}
+
+.master h3 {
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+.master-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+input[type="range"] {
+    accent-color: var(--purple);
+    width: 100%;
+}
+
+/* =========================
+   PIANO KEYBOARD
+========================= */
+
+.keyboard {
+    position: fixed;
+    left: 230px;
+    right: 0;
+    bottom: 170px;
+
+    height: 0;
+
+    pointer-events: none;
+}
+
+.piano-popup {
+    position: absolute;
+    right: 20px;
+    bottom: 12px;
+
+    display: flex;
+    gap: 2px;
+
+    opacity: 0;
+    transform: translateY(15px);
+    pointer-events: none;
+
+    transition: .2s;
+}
+
+.piano-popup.show {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.white-key {
+    width: 42px;
+    height: 110px;
+
+    background: #f8fafc;
+    border-radius: 0 0 7px 7px;
+
+    color: #222;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+
+    padding-bottom: 8px;
+
+    font-size: 10px;
+
+    box-shadow:
+        inset 0 -4px 0 #cbd5e1,
+        0 5px 15px rgba(0,0,0,.3);
+
+    cursor: pointer;
+}
+
+.white-key:active {
+    background: #dbeafe;
+    transform: translateY(3px);
+}
+
+/* =========================
+   CHILD FRIENDLY BUTTON
+========================= */
+
+.fun-button {
+    margin-top: 15px;
+
+    width: 100%;
+
+    padding: 12px;
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f97316,
+            #ec4899
+        );
+
+    font-weight: 900;
+
+    box-shadow:
+        0 8px 20px rgba(236,72,153,.2);
+}
+
+.fun-button:hover {
+    transform: translateY(-2px);
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width: 850px) {
+
+    .workspace {
+        grid-template-columns: 170px 1fr;
+    }
+
+    .logo {
+        min-width: 130px;
+    }
+
+    .logo-sub {
+        display: none;
+    }
+
+    .top-actions {
+        display: none;
+    }
+
+    .keyboard {
+        left: 170px;
+    }
+}
+
+@media(max-width: 650px) {
+
+    .sidebar {
+        display: none;
+    }
+
+    .workspace {
+        grid-template-columns: 1fr;
+    }
+
+    .keyboard {
+        left: 0;
+    }
+
+    .project-name {
+        display: none;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<!-- ======================================
+     TOP BAR
+====================================== -->
+
+<header class="topbar">
+
+    <div class="logo">
+
+        <div class="logo-icon">
+            🎵
+        </div>
+
+        <div>
+            <div class="logo-text">
+                KidStudio
+            </div>
+
+            <div class="logo-sub">
+                Learn • Create • Play
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="transport">
+
+        <button id="stopBtn">
+            ■
+        </button>
+
+        <button
+            id="playBtn"
+            class="play">
+            ▶
+        </button>
+
+        <button
+            id="loopBtn">
+            🔁
+        </button>
+
+        <button
+            class="record"
+            id="recordBtn">
+            ●
+        </button>
+
+    </div>
+
+
+    <div class="bpm">
+
+        <span>Tempo</span>
+
+        <input
+            id="bpm"
+            type="number"
+            min="40"
+            max="220"
+            value="100">
+
+        <span>BPM</span>
+
+    </div>
+
+
+    <div class="project-name">
+        🌈 My Happy Song
+    </div>
+
+
+    <div class="top-actions">
+
+        <button
+            class="action"
+            id="saveBtn">
+            💾 Save
+        </button>
+
+        <button
+            class="action"
+            id="loadBtn">
+            📂 Load
+        </button>
+
+        <button
+            class="action"
+            id="clearBtn">
+            🗑 Clear
+        </button>
+
+    </div>
+
+</header>
+
+
+<!-- ======================================
+     WORKSPACE
+====================================== -->
+
+<section class="workspace">
+
+
+<!-- ======================================
+     SIDEBAR
+====================================== -->
+
+<aside class="sidebar">
+
+    <div class="section-title">
+        Instruments
+    </div>
+
+
+    <div
+        class="instrument active"
+        data-instrument="piano">
+
+        <div class="instrument-icon">
+            🎹
+        </div>
+
+        <div class="instrument-info">
+
+            <div class="instrument-name">
+                Happy Piano
+            </div>
+
+            <div class="instrument-desc">
+                Bright & friendly
+            </div>
+
+        </div>
+
+        <div class="track-color color-purple"></div>
+
+    </div>
+
+
+    <div
+        class="instrument"
+        data-instrument="bass">
+
+        <div class="instrument-icon">
+            🎸
+        </div>
+
+        <div class="instrument-info">
+
+            <div class="instrument-name">
+                Bouncy Bass
+            </div>
+
+            <div class="instrument-desc">
+                Low & groovy
+            </div>
+
+        </div>
+
+        <div class="track-color color-blue"></div>
+
+    </div>
+
+
+    <div
+        class="instrument"
+        data-instrument="melody">
+
+        <div class="instrument-icon">
+            ✨
+        </div>
+
+        <div class="instrument-info">
+
+            <div class="instrument-name">
+                Magic Melody
+            </div>
+
+            <div class="instrument-desc">
+                Sparkly lead
+            </div>
+
+        </div>
+
+        <div class="track-color color-pink"></div>
+
+    </div>
+
+
+    <div
+        class="instrument"
+        data-instrument="drums">
+
+        <div class="instrument-icon">
+            🥁
+        </div>
+
+        <div class="instrument-info">
+
+            <div class="instrument-name">
+                Fun Drums
+            </div>
+
+            <div class="instrument-desc">
+                Boom & clap
+            </div>
+
+        </div>
+
+        <div class="track-color color-orange"></div>
+
+    </div>
+
+
+    <div
+        class="instrument"
+        data-instrument="chords">
+
+        <div class="instrument-icon">
+            🎼
+        </div>
+
+        <div class="instrument-info">
+
+            <div class="instrument-name">
+                Easy Chords
+            </div>
+
+            <div class="instrument-desc">
+                Build harmony
+            </div>
+
+        </div>
+
+        <div class="track-color color-green"></div>
+
+    </div>
+
+
+    <button
+        class="fun-button"
+        id="pianoToggle">
+        🎹 Open Piano
+    </button>
+
+
+    <button
+        class="fun-button"
+        id="lessonBtn">
+        🧑‍🏫 How Songs Work
+    </button>
+
+</aside>
+
+
+<!-- ======================================
+     EDITOR
+====================================== -->
+
+<main class="editor">
+
+
+    <div class="editor-toolbar">
+
+        <button
+            class="tool active"
+            id="drawTool">
+            ✏️ Draw
+        </button>
+
+        <button
+            class="tool"
+            id="eraseTool">
+            🧽 Erase
+        </button>
+
+        <button
+            class="tool"
+            id="snapTool">
+            🧲 Snap: 1/4
+        </button>
+
+        <div class="spacer"></div>
+
+        <span class="grid-info">
+            Click a square to add a note
+        </span>
+
+    </div>
+
+
+    <div class="piano-area">
+
+        <!-- Piano note names -->
+
+        <div
+            class="keys"
+            id="keys">
+        </div>
+
+
+        <!-- Piano Roll -->
+
+        <div
+            class="roll-container"
+            id="rollContainer">
+
+            <div
+                class="roll"
+                id="roll">
+
+            </div>
+
+        </div>
+
+    </div>
+
+</main>
+
+</section>
+
+
+<!-- ======================================
+     MIXER
+====================================== -->
+
+<section class="mixer">
+
+    <div class="channels">
+
+
+        <div class="channel">
+
+            <div class="channel-name">
+                <span>🎹 Piano</span>
+                <span>-6 dB</span>
+            </div>
+
+            <div class="meter">
+                <div
+                    class="meter-fill"
+                    style="width:70%">
+                </div>
+            </div>
+
+            <input
+                class="volume"
+                type="range"
+                value="75">
+
+        </div>
+
+
+        <div class="channel">
+
+            <div class="channel-name">
+                <span>🎸 Bass</span>
+                <span>-8 dB</span>
+            </div>
+
+            <div class="meter">
+                <div
+                    class="meter-fill"
+                    style="width:52%">
+                </div>
+            </div>
+
+            <input
+                class="volume"
+                type="range"
+                value="65">
+
+        </div>
+
+
+        <div class="channel">
+
+            <div class="channel-name">
+                <span>✨ Melody</span>
+                <span>-4 dB</span>
+            </div>
+
+            <div class="meter">
+                <div
+                    class="meter-fill"
+                    style="width:80%">
+                </div>
+            </div>
+
+            <input
+                class="volume"
+                type="range"
+                value="80">
+
+        </div>
+
+
+        <div class="channel">
+
+            <div class="channel-name">
+                <span>🥁 Drums</span>
+                <span>-3 dB</span>
+            </div>
+
+            <div class="meter">
+                <div
+                    class="meter-fill"
+                    style="width:88%">
+                </div>
+            </div>
+
+            <input
+                class="volume"
+                type="range"
+                value="85">
+
+        </div>
+
+    </div>
+
+
+    <div class="master">
+
+        <h3>
+            🎚️ Master
+        </h3>
+
+        <div class="master-control">
+
+            🔈
+
+            <input
+                id="masterVolume"
+                type="range"
+                min="0"
+                max="1"
+                step=".01"
+                value=".7">
+
+            🔊
+
+        </div>
+
+        <br>
+
+        <div class="meter">
+
+            <div
+                class="meter-fill"
+                id="masterMeter">
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ======================================
+     POPUP PIANO
+====================================== -->
+
+<div class="keyboard">
+
+    <div
+        class="piano-popup"
+        id="pianoPopup">
+
+        <div class="white-key" data-note="C4">
+            C4
+        </div>
+
+        <div class="white-key" data-note="D4">
+            D4
+        </div>
+
+        <div class="white-key" data-note="E4">
+            E4
+        </div>
+
+        <div class="white-key" data-note="F4">
+            F4
+        </div>
+
+        <div class="white-key" data-note="G4">
+            G4
+        </div>
+
+        <div class="white-key" data-note="A4">
+            A4
+        </div>
+
+        <div class="white-key" data-note="B4">
+            B4
+        </div>
+
+        <div class="white-key" data-note="C5">
+            C5
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   KIDSTUDIO MUSIC ENGINE
+===================================================== */
+
+let audioContext = null;
+
+let masterGain = null;
+
+let selectedInstrument = "piano";
+
+let isPlaying = false;
+
+let isLooping = false;
+
+let currentStep = 0;
+
+let timer = null;
+
+
+/* =====================================================
+   NOTES
+===================================================== */
+
+const notes = [
+
+    "C6",
+    "B5",
+    "A5",
+    "G5",
+    "F5",
+    "E5",
+    "D5",
+    "C5",
+    "B4",
+    "A4",
+    "G4",
+    "F4",
+    "E4",
+    "D4",
+    "C4",
+    "B3",
+    "A3",
+    "G3",
+    "F3",
+    "E3",
+    "D3",
+    "C3",
+    "B2",
+    "A2",
+    "G2",
+    "F2",
+    "E2",
+    "D2",
+    "C2",
+    "B1",
+    "A1",
+    "G1",
+    "F1"
+];
+
+
+/* =====================================================
+   CREATE PIANO LABELS
+===================================================== */
+
+const keys = document.getElementById("keys");
+
+notes.forEach((note, index) => {
+
+    const key = document.createElement("div");
+
+    key.className = "key";
+
+    key.textContent = note;
+
+    keys.appendChild(key);
+
+});
+
+
+/* =====================================================
+   AUDIO INITIALIZATION
+===================================================== */
+
+function initAudio() {
+
+    if (audioContext) return;
+
+    audioContext =
+        new (
+            window.AudioContext ||
+            window.webkitAudioContext
+        )();
+
+    masterGain =
+        audioContext.createGain();
+
+    masterGain.gain.value = .7;
+
+    masterGain.connect(
+        audioContext.destination
+    );
+}
+
+
+/* =====================================================
+   NOTE FREQUENCY
+===================================================== */
+
+function frequency(note) {
+
+    const table = {
+
+        "C": -9,
+        "D": -7,
+        "E": -5,
+        "F": -4,
+        "G": -2,
+        "A": 0,
+        "B": 2
+
+    };
+
+    const letter = note[0];
+
+    const octave =
+        parseInt(note.slice(1));
+
+    const semitones =
+        table[letter] +
+        ((octave - 4) * 12);
+
+    return 440 *
+        Math.pow(
+            2,
+            semitones / 12
+        );
+}
+
+
+/* =====================================================
+   PLAY SYNTH NOTE
+===================================================== */
+
+function playNote(
+    note,
+    instrument = selectedInstrument,
+    duration = .45
+) {
+
+    initAudio();
+
+    if (
+        audioContext.state ===
+        "suspended"
+    ) {
+        audioContext.resume();
+    }
+
+    const oscillator =
+        audioContext.createOscillator();
+
+    const gain =
+        audioContext.createGain();
+
+
+    /* Instrument sounds */
+
+    if (instrument === "bass") {
+
+        oscillator.type = "sawtooth";
+
+    } else if (
+        instrument === "melody"
+    ) {
+
+        oscillator.type = "triangle";
+
+    } else {
+
+        oscillator.type = "sine";
+
+    }
+
+
+    oscillator.frequency.value =
+        frequency(note);
+
+
+    const now =
+        audioContext.currentTime;
+
+
+    gain.gain.setValueAtTime(
+        0,
+        now
+    );
+
+    gain.gain.linearRampToValueAtTime(
+        .18,
+        now + .02
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+        .001,
+        now + duration
+    );
+
+
+    oscillator.connect(gain);
+
+    gain.connect(masterGain);
+
+    oscillator.start(now);
+
+    oscillator.stop(
+        now + duration + .05
+    );
+
+
+    /* Visual master meter */
+
+    const meter =
+        document.getElementById(
+            "masterMeter"
+        );
+
+    meter.style.width =
+        (45 + Math.random() * 50) + "%";
+
+    setTimeout(() => {
+
+        meter.style.width = "25%";
+
+    }, 180);
+}
+
+
+/* =====================================================
+   INSTRUMENT SELECTION
+===================================================== */
+
+document
+    .querySelectorAll(".instrument")
+    .forEach(item => {
+
+        item.addEventListener(
+            "click",
+            () => {
+
+                document
+                    .querySelectorAll(
+                        ".instrument"
+                    )
+                    .forEach(i =>
+                        i.classList.remove(
+                            "active"
+                        )
+                    );
+
+                item.classList.add(
+                    "active"
+                );
+
+                selectedInstrument =
+                    item.dataset.instrument;
+
+            }
+        );
+
+    });
+
+
+/* =====================================================
+   DRAW NOTES
+===================================================== */
+
+const roll =
+    document.getElementById("roll");
+
+let notesData = [];
+
+
+roll.addEventListener(
+    "click",
+    event => {
+
+        if (
+            event.target.classList.contains(
+                "note"
+            )
+        ) return;
+
+
+        if (
+            document.body.dataset.tool ===
+            "erase"
+        ) return;
+
+
+        const rect =
+            roll.getBoundingClientRect();
+
+
+        let x =
+            event.clientX -
+            rect.left;
+
+
+        let y =
+            event.clientY -
+            rect.top;
+
+
+        /* Snap to quarter notes */
+
+        x =
+            Math.floor(
+                x / 50
+            ) * 50;
+
+
+        const row =
+            Math.floor(
+                y / 28
+            );
+
+
+        if (
+            row < 0 ||
+            row >= notes.length
+        ) return;
+
+
+        const note =
+            notes[row];
+
+
+        createNote(
+            x,
+            row,
+            note,
+            selectedInstrument
+        );
+
+        playNote(
+            note,
+            selectedInstrument
+        );
+
+    }
+);
+
+
+/* =====================================================
+   CREATE VISUAL NOTE
+===================================================== */
+
+function createNote(
+    x,
+    row,
+    note,
+    instrument
+) {
+
+    const element =
+        document.createElement(
+            "div"
+        );
+
+
+    element.className =
+        "note " +
+        instrument;
+
+
+    element.style.left =
+        x + "px";
+
+
+    element.style.top =
+        (row * 28 + 2) + "px";
+
+
+    element.style.width =
+        "48px";
+
+
+    element.textContent =
+        note;
+
+
+    element.dataset.note =
+        note;
+
+
+    element.dataset.x =
+        x;
+
+
+    element.addEventListener(
+        "dblclick",
+        () => {
+
+            element.remove();
+
+            notesData =
+                notesData.filter(
+                    n =>
+                        !(
+                            n.x == x &&
+                            n.row == row
+                        )
+                );
+
+        }
+    );
+
+
+    roll.appendChild(
+        element
+    );
+
+
+    notesData.push({
+
+        x,
+        row,
+        note,
+        instrument
+
+    });
+
+}
+
+
+/* =====================================================
+   DELETE MODE
+===================================================== */
+
+document.body.dataset.tool =
+    "draw";
+
+
+document
+    .getElementById("drawTool")
+    .addEventListener(
+        "click",
+        () => {
+
+            document.body.dataset.tool =
+                "draw";
+
+            document
+                .getElementById(
+                    "drawTool"
+                )
+                .classList.add("active");
+
+            document
+                .getElementById(
+                    "eraseTool"
+                )
+                .classList.remove("active");
+
+        }
+    );
+
+
+document
+    .getElementById("eraseTool")
+    .addEventListener(
+        "click",
+        () => {
+
+            document.body.dataset.tool =
+                "erase";
+
+            document
+                .getElementById(
+                    "eraseTool"
+                )
+                .classList.add("active");
+
+            document
+                .getElementById(
+                    "drawTool"
+                )
+                .classList.remove("active");
+
+        }
+    );
+
+
+/* =====================================================
+   ERASE NOTES
+===================================================== */
+
+roll.addEventListener(
+    "click",
+    event => {
+
+        if (
+            document.body.dataset.tool !==
+            "erase"
+        ) return;
+
+
+        if (
+            event.target.classList.contains(
+                "note"
+            )
+        ) {
+
+            event.target.remove();
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   PIANO POPUP
+===================================================== */
+
+const pianoPopup =
+    document.getElementById(
+        "pianoPopup"
+    );
+
+
+document
+    .getElementById("pianoToggle")
+    .addEventListener(
+        "click",
+        () => {
+
+            pianoPopup.classList.toggle(
+                "show"
+            );
+
+        }
+    );
+
+
+document
+    .querySelectorAll(".white-key")
+    .forEach(key => {
+
+        key.addEventListener(
+            "click",
+            () => {
+
+                playNote(
+                    key.dataset.note
+                );
+
+            }
+        );
+
+    });
+
+
+/* =====================================================
+   KEYBOARD COMPUTER CONTROL
+===================================================== */
+
+const computerKeys = {
+
+    "a": "C4",
+    "s": "D4",
+    "d": "E4",
+    "f": "F4",
+    "g": "G4",
+    "h": "A4",
+    "j": "B4",
+    "k": "C5"
+
+};
+
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        const note =
+            computerKeys[
+                event.key.toLowerCase()
+            ];
+
+        if (note) {
+
+            playNote(
+                note
+            );
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   PLAYBACK
+===================================================== */
+
+function startPlayback() {
+
+    if (
+        notesData.length === 0
+    ) {
+
+        /* Demo melody */
+
+        createNote(
+            0,
+            14,
+            "C4",
+            "piano"
+        );
+
+        createNote(
+            50,
+            12,
+            "E4",
+            "piano"
+        );
+
+        createNote(
+            100,
+            10,
+            "G4",
+            "piano"
+        );
+
+        createNote(
+            150,
+            12,
+            "E4",
+            "piano"
+        );
+
+        createNote(
+            200,
+            0,
+            "C6",
+            "melody"
+        );
+
+        createNote(
+            250,
+            2,
+            "A5",
+            "melody"
+        );
+
+        createNote(
+            300,
+            4,
+            "G5",
+            "melody"
+        );
+
+        createNote(
+            350,
+            7,
+            "C5",
+            "melody"
+        );
+
+    }
+
+
+    isPlaying = true;
+
+    currentStep = 0;
+
+
+    const bpm =
+        Number(
+            document.getElementById(
+                "bpm"
+            ).value
+        );
+
+
+    const interval =
+        60000 / bpm / 2;
+
+
+    timer =
+        setInterval(
+            playbackStep,
+            interval
+        );
+
+
+    document
+        .getElementById(
+            "playBtn"
+        )
+        .textContent = "⏸";
+
+}
+
+
+/* =====================================================
+   PLAYBACK STEP
+===================================================== */
+
+function playbackStep() {
+
+    const x =
+        currentStep * 50;
+
+
+    notesData
+        .filter(
+            n =>
+                Math.abs(
+                    n.x - x
+                ) < 3
+        )
+        .forEach(
+            n => {
+
+                playNote(
+                    n.note,
+                    n.instrument
+                );
+
+            }
+        );
+
+
+    currentStep++;
+
+
+    if (
+        currentStep > 32
+    ) {
+
+        if (isLooping) {
+
+            currentStep = 0;
+
+        } else {
+
+            stopPlayback();
+
+        }
+
+    }
+
+}
+
+
+/* =====================================================
+   STOP
+===================================================== */
+
+function stopPlayback() {
+
+    clearInterval(timer);
+
+    timer = null;
+
+    isPlaying = false;
+
+    currentStep = 0;
+
+    document
+        .getElementById(
+            "playBtn"
+        )
+        .textContent = "▶";
+
+}
+
+
+/* =====================================================
+   PLAY BUTTON
+===================================================== */
+
+document
+    .getElementById("playBtn")
+    .addEventListener(
+        "click",
+        () => {
+
+            if (isPlaying) {
+
+                stopPlayback();
+
+            } else {
+
+                startPlayback();
+
+            }
+
+        }
+    );
+
+
+/* =====================================================
+   STOP BUTTON
+===================================================== */
+
+document
+    .getElementById("stopBtn")
+    .addEventListener(
+        "click",
+        stopPlayback
+    );
+
+
+/* =====================================================
+   LOOP
+===================================================== */
+
+document
+    .getElementById("loopBtn")
+    .addEventListener(
+        "click",
+        event => {
+
+            isLooping =
+                !isLooping;
+
+            event.target.style.color =
+                isLooping
+                    ? "#34d399"
+                    : "white";
+
+        }
+    );
+
+
+/* =====================================================
+   RECORD BUTTON
+===================================================== */
+
+document
+    .getElementById("recordBtn")
+    .addEventListener(
+        "click",
+        event => {
+
+            event.target.style.color =
+                event.target.style.color ===
+                "rgb(251, 113, 133)"
+                    ? "#fb7185"
+                    : "#ffffff";
+
+        }
+    );
+
+
+/* =====================================================
+   MASTER VOLUME
+===================================================== */
+
+document
+    .getElementById(
+        "masterVolume"
+    )
+    .addEventListener(
+        "input",
+        event => {
+
+            initAudio();
+
+            masterGain.gain.value =
+                event.target.value;
+
+        }
+    );
+
+
+/* =====================================================
+   SAVE PROJECT
+===================================================== */
+
+document
+    .getElementById("saveBtn")
+    .addEventListener(
+        "click",
+        () => {
+
+            const project = {
+
+                bpm:
+                    document.getElementById(
+                        "bpm"
+                    ).value,
+
+                notes:
+                    notesData
+
+            };
+
+
+            localStorage.setItem(
+                "kidStudioProject",
+                JSON.stringify(
+                    project
+                )
+            );
+
+
+            alert(
+                "🎉 Song saved!"
+            );
+
+        }
+    );
+
+
+/* =====================================================
+   LOAD PROJECT
+===================================================== */
+
+document
+    .getElementById("loadBtn")
+    .addEventListener(
+        "click",
+        () => {
+
+            const saved =
+                localStorage.getItem(
+                    "kidStudioProject"
+                );
+
+
+            if (!saved) {
+
+                alert(
+                    "No saved song yet!"
+                );
+
+                return;
+
+            }
+
+
+            const project =
+                JSON.parse(saved);
+
+
+            document.getElementById(
+                "bpm"
+            ).value =
+                project.bpm;
+
+
+            roll
+                .querySelectorAll(
+                    ".note"
+                )
+                .forEach(
+                    n =>
+                        n.remove()
+                );
+
+
+            notesData = [];
+
+
+            project.notes.forEach(
+                n => {
+
+                    createNote(
+                        n.x,
+                        n.row,
+                        n.note,
+                        n.instrument
+                    );
+
+                }
+            );
+
+
+            alert(
+                "🎵 Song loaded!"
+            );
+
+        }
+    );
+
+
+/* =====================================================
+   CLEAR PROJECT
+===================================================== */
+
+document
+    .getElementById("clearBtn")
+    .addEventListener(
+        "click",
+        () => {
+
+            if (
+                !confirm(
+                    "Clear your whole song?"
+                )
+            ) return;
+
+
+            notesData = [];
+
+
+            roll
+                .querySelectorAll(
+                    ".note"
+                )
+                .forEach(
+                    n =>
+                        n.remove()
+                );
+
+        }
+    );
+
+
+/* =====================================================
+   LESSON MODE
+===================================================== */
+
+document
+    .getElementById("lessonBtn")
+    .addEventListener(
+        "click",
+        () => {
+
+            alert(
+`
+🎵 HOW IS A SONG BUILT?
+
+🥁 DRUMS
+The drums keep the beat.
+
+🎸 BASS
+The bass gives the song a
+deep musical foundation.
+
+🎹 CHORDS
+Chords make the song sound
+full and colorful.
+
+✨ MELODY
+The melody is the part you
+can usually sing or remember.
+
+🎧 MIXER
+The mixer controls how loud
+each instrument is.
+
+Try adding one instrument
+at a time and press PLAY!
+
+Have fun making music! 🌈
+`
+            );
+
+        }
+    );
+
+
+/* =====================================================
+   START WITH DEMO NOTES
+===================================================== */
+
+createNote(
+    0,
+    14,
+    "C4",
+    "piano"
+);
+
+createNote(
+    100,
+    12,
+    "E4",
+    "piano"
+);
+
+createNote(
+    200,
+    10,
+    "G4",
+    "piano"
+);
+
+createNote(
+    300,
+    12,
+    "E4",
+    "piano"
+);
+
+
+/* =====================================================
+   FINISHED
+===================================================== */
+
+console.log(
+    "🎵 KidStudio loaded successfully!"
+);
+
+</script>
+
+</body>
+</html>
