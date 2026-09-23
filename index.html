@@ -2202,27 +2202,41 @@ function playbackStep(){
 
 function stop(){
 
-    clearInterval(timer);
+    /* Stop the playback timer */
+    if(timer !== null){
 
-    timer=null;
+        clearInterval(timer);
 
-    playing=false;
+        timer = null;
 
-    step=0;
+    }
 
+    /* Stop playback state */
+    playing = false;
+
+    /* Reset position */
+    step = 0;
+
+    /* Reset play button */
     document
-    .getElementById("play")
-    .textContent="▶";
+        .getElementById("play")
+        .textContent = "▶";
 
+    /* Remove drum playback indicators */
     document
-    .querySelectorAll(".step.playing")
-    .forEach(
-        x=>x.classList.remove("playing")
-    );
+        .querySelectorAll(".step.playing")
+        .forEach(
+            x => {
+
+                x.classList.remove(
+                    "playing"
+                );
+
+            }
+        );
 
 }
-
-
+    
 /* =========================================================
    PLAY BUTTON
 ========================================================= */
@@ -2631,53 +2645,94 @@ document
 
 
 /* =========================================================
-   CLEAR
+   CLEAR EVERYTHING
 ========================================================= */
 
 document
 .getElementById("clear")
 .addEventListener(
     "click",
-    ()=>{
+    () => {
 
-        if(
+        if (
             !confirm(
                 "Clear the whole song?"
             )
-        )
+        ) {
             return;
+        }
 
+        /* 1. STOP PLAYBACK FIRST */
+        stop();
 
-        notes=[];
+        /* 2. RESET PLAYBACK POSITION */
+        step = 0;
 
+        /* 3. DELETE ALL PIANO ROLL NOTES */
+        notes = [];
 
         roll
-        .querySelectorAll(".note")
-        .forEach(
-            n=>n.remove()
-        );
+            .querySelectorAll(".note")
+            .forEach(
+                note => note.remove()
+            );
 
-
+        /* 4. CLEAR ALL DRUM PATTERNS */
         drumTypes.forEach(
-            ([name])=>{
+            ([name]) => {
 
-                drumPattern[name]=
+                drumPattern[name] =
                     Array(16).fill(false);
 
             }
         );
 
-
+        /* 5. CLEAR DRUM BUTTONS */
         document
-        .querySelectorAll(".step")
-        .forEach(
-            x=>x.classList.remove("on")
+            .querySelectorAll(".step")
+            .forEach(
+                button => {
+
+                    button.classList.remove(
+                        "on"
+                    );
+
+                    button.classList.remove(
+                        "playing"
+                    );
+
+                }
+            );
+
+        /* 6. RESET MASTER METER */
+        document
+            .getElementById(
+                "masterMeter"
+            )
+            .style.width = "0%";
+
+        /* 7. RESET CHANNEL METERS */
+        document
+            .querySelectorAll(
+                ".meterFill"
+            )
+            .forEach(
+                meter => {
+
+                    meter.style.width = "0%";
+
+                }
+            );
+
+        console.log(
+            "🗑️ Everything cleared."
         );
 
     }
 );
 
 
+    
 /* =========================================================
    LESSON MODE
 ========================================================= */
